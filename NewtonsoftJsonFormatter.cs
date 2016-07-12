@@ -270,6 +270,7 @@ namespace JonGrant.Json
 
         public override void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
+            endpointDispatcher.ChannelDispatcher.ErrorHandlers.Clear();
             endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add(new NewtonsoftJsonErrorHandler(includeExceptionDetailInFaults));
         }
     }
@@ -344,7 +345,7 @@ namespace JonGrant.Json
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
             var wrapped = new { error = JsonErrorMessage.FromException(error, includeExceptionDetailInFaults) };
-            fault = NewtonsoftJsonDispatchFormatter.FormatObjectAsMessage(wrapped, version, "action");
+            fault = NewtonsoftJsonDispatchFormatter.FormatObjectAsMessage(wrapped, version, "fault");
         }
     }
 
