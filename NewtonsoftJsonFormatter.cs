@@ -271,6 +271,8 @@ namespace JonGrant.Json
 
         public override void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
+            base.ApplyDispatchBehavior(endpoint, endpointDispatcher);
+            
             endpointDispatcher.ChannelDispatcher.ErrorHandlers.Clear();
             endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add(new NewtonsoftJsonErrorHandler(includeExceptionDetailInFaults));
         }
