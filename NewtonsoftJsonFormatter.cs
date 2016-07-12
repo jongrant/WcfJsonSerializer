@@ -18,6 +18,7 @@ using Newtonsoft.Json.Converters;
 namespace JonGrant.Json
 {
     // Based on http://itq.nl/replacing-wcf-datacontractjsonserializer-with-newtonsoft-jsonserializer/
+    // See http://jongrant.org/2016/07/12/microsofts-wcf-datacontractjsonserializer-sucks/
 
     public class NewtonsoftJsonDispatchFormatter : IDispatchMessageFormatter
     {
