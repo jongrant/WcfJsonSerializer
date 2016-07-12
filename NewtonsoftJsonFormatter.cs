@@ -101,10 +101,10 @@ namespace JonGrant.Json
 
         public Message SerializeReply(MessageVersion messageVersion, object[] parameters, object result)
         {
-            return FormatObjectAsMessage(result, messageVersion, operation.Messages[1].Action);
+            return FormatObjectAsMessage(result, messageVersion, operation.Messages[1].Action, HttpStatusCode.OK);
         }
 
-        public static Message FormatObjectAsMessage(object obj, MessageVersion messageVersion, string action)
+        public static Message FormatObjectAsMessage(object obj, MessageVersion messageVersion, string action, HttpStatusCode statusCode)
         {
             byte[] body;
             var serializer = new JsonSerializer();
@@ -128,6 +128,7 @@ namespace JonGrant.Json
             replyMessage.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(WebContentFormat.Raw));
             var respProp = new HttpResponseMessageProperty();
             respProp.Headers[HttpResponseHeader.ContentType] = "application/json";
+            respProp.StatusCode = statusCode;
             replyMessage.Properties.Add(HttpResponseMessageProperty.Name, respProp);
             return replyMessage;
         }
@@ -345,7 +346,11 @@ namespace JonGrant.Json
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
             var wrapped = new { error = JsonErrorMessage.FromException(error, includeExceptionDetailInFaults) };
-            fault = NewtonsoftJsonDispatchFormatter.FormatObjectAsMessage(wrapped, version, "fault");
+
+            var statusCode = HttpStatusCode.InternalServerError;
+            if (error is WebFaultException) statusCode = ((WebFaultException)error).StatusCode;
+            
+            fault = NewtonsoftJsonDispatchFormatter.FormatObjectAsMessage(wrapped, version, "fault", statusCode);
         }
     }
 
